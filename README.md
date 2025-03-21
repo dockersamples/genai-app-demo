@@ -75,58 +75,6 @@ go run main.go
 
 Make sure to set the environment variables in `backend.env` or provide them directly.
 
-## Testing
-
-The application includes comprehensive integration tests using Testcontainers in Go.
-
-### Running Tests
-
-```bash
-# Run all tests
-cd tests
-go test -v ./integration
-
-# Run specific test categories
-go test -v ./integration -run TestGenAIAppIntegration    # API tests
-go test -v ./integration -run TestFrontendIntegration    # UI tests
-go test -v ./integration -run TestGenAIQuality           # Quality tests
-go test -v ./integration -run TestGenAIPerformance       # Performance tests
-
-# Run tests in short mode (faster)
-go test -v ./integration -short
-
-# Run tests with Docker Compose instead of Testcontainers
-export USE_DOCKER_COMPOSE=true
-go test -v ./integration -run TestWithDockerCompose
-```
-
-Alternatively, you can use the provided Makefile:
-
-```bash
-# Run all tests
-make -C tests test
-
-# Run specific test categories
-make -C tests test-api
-make -C tests test-frontend
-make -C tests test-quality
-make -C tests test-performance
-
-# Clean up test resources
-make -C tests clean
-```
-
-## Configuration
-
-The backend connects to the LLM service using environment variables defined in `backend.env`:
-
-- `BASE_URL`: URL for the model runner
-- `MODEL`: Model identifier to use
-- `API_KEY`: API key for authentication (defaults to "ollama")
-
-## Deployment
-
-The application is configured for easy deployment using Docker Compose. See the `compose.yaml` and `ollama-ci.yaml` files for details.
 
 ## License
 
