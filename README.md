@@ -78,7 +78,7 @@ Make sure to set the environment variables in `backend.env` or provide them dire
 
 ## License
 
-MIT
+[MIT](https://github.com/dockersamples/genai-app-demo/blob/main/LICENSE)
 
 ## Contributing
 
