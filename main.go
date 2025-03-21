@@ -1,14 +1,17 @@
 package main
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 	"os"
 
-	"github.com/openai/openai-go/option"
-
+	"github.com/google/uuid"
 	"github.com/openai/openai-go"
+	"github.com/openai/openai-go/option"
+	"github.com/username/project/rag" // Import our RAG package
 )
 
 type Message struct {
@@ -21,15 +24,37 @@ type ChatRequest struct {
 	Message  string    `json:"message"`
 }
 
+// Document request for adding documents to the knowledge base
+type DocumentRequest struct {
+	Title   string `json:"title"`
+	Content string `json:"content"`
+	URL     string `json:"url,omitempty"`
+}
+
 func main() {
 	baseURL := os.Getenv("BASE_URL")
 	model := os.Getenv("MODEL")
-	apiKey := os.Getenv("apiKey")
+	apiKey := os.Getenv("API_KEY")
 
 	client := openai.NewClient(
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey(apiKey),
 	)
+
+	// Initialize the RAG manager
+	ragManager, err := rag.NewRAGManager()
+	if err != nil {
+		log.Fatalf("Failed to initialize RAG manager: %v", err)
+	}
+	defer func() {
+		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+		defer cancel()
+		if err := ragManager.Close(ctx); err != nil {
+			log.Printf("Error closing RAG manager: %v", err)
+		}
+	}()
+
+	log.Printf("RAG enabled: %v", ragManager.IsEnabled())
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		if r.Method == http.MethodOptions {
@@ -39,6 +64,59 @@ func main() {
 			w.WriteHeader(http.StatusOK)
 			return
 		}
+	})
+
+	// Health check endpoint
+	http.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+		fmt.Fprint(w, "OK")
+	})
+
+	// Endpoint for adding documents to the knowledge base
+	http.HandleFunc("/documents", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Access-Control-Allow-Methods", "POST, OPTIONS")
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+
+		if r.Method == http.MethodOptions {
+			w.WriteHeader(http.StatusOK)
+			return
+		}
+
+		if r.Method != http.MethodPost {
+			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+			return
+		}
+
+		var req DocumentRequest
+		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+			http.Error(w, "Invalid request body", http.StatusBadRequest)
+			return
+		}
+
+		if req.Title == "" || req.Content == "" {
+			http.Error(w, "Title and content are required", http.StatusBadRequest)
+			return
+		}
+
+		// Create a document and add it to the knowledge base
+		doc := rag.Document{
+			ID:      uuid.New().String(),
+			Title:   req.Title,
+			Content: req.Content,
+			URL:     req.URL,
+		}
+
+		ctx := r.Context()
+		err := ragManager.AddDocument(ctx, doc)
+		if err != nil {
+			log.Printf("Error adding document: %v", err)
+			http.Error(w, "Failed to add document", http.StatusInternalServerError)
+			return
+		}
+
+		w.WriteHeader(http.StatusCreated)
+		json.NewEncoder(w).Encode(map[string]string{"id": doc.ID})
 	})
 
 	http.HandleFunc("/chat", func(w http.ResponseWriter, r *http.Request) {
@@ -83,13 +161,25 @@ func main() {
 			messages = append(messages, message)
 		}
 
+		// Process the user's message with RAG if enabled
+		userMsg := req.Message
+		if ragManager.IsEnabled() {
+			enhancedMsg, err := ragManager.EnhancePromptWithContext(ctx, userMsg)
+			if err != nil {
+				log.Printf("Warning: Failed to enhance prompt with RAG: %v", err)
+				// Fall back to the original message
+			} else {
+				userMsg = enhancedMsg
+			}
+		}
+
 		param := openai.ChatCompletionNewParams{
 			Messages: openai.F(messages),
 			Model:    openai.F(model),
 		}
 
 		// Adds the user message to the conversation
-		param.Messages.Value = append(param.Messages.Value, openai.UserMessage(req.Message))
+		param.Messages.Value = append(param.Messages.Value, openai.UserMessage(userMsg))
 		stream := client.Chat.Completions.NewStreaming(ctx, param)
 
 		for stream.Next() {
