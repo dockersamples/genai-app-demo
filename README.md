@@ -82,4 +82,4 @@ Make sure to set the environment variables in `backend.env` or provide them dire
 
 ## Contributing
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+Since this project is intended to support a specific use case guide, contributions are limited to bug fixes or security issues. If you have a question, feel free to open an issue!
