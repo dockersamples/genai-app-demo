@@ -44,7 +44,7 @@ func init() {
 	// Set the environment variables for the application
 	baseURL := fmt.Sprintf("http://%s:%s/engines/llama.cpp/v1", host, mappedPort.Port())
 	os.Setenv("BASE_URL", baseURL)
-	os.Setenv("MODEL", "ignaciolopezluna020/llama3.2:1b")
+	os.Setenv("MODEL", "ignaciolopezluna020/llama3.2:1B") // Corrected to uppercase B
 	os.Setenv("API_KEY", "ollama")
 
 	log.Printf("Development environment initialized. Using BASE_URL: %s", baseURL)
