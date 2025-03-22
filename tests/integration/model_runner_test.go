@@ -84,7 +84,7 @@ func TestModelRunnerIntegration(t *testing.T) {
 	
 	// Test 2: POST /models/create endpoint to create a model
 	t.Log("Testing POST /models/create endpoint...")
-	modelName := "ignaciolopezluna020/llama3.2:1b"
+	modelName := "ignaciolopezluna020/llama3.2:1B" // Corrected to uppercase B
 	createModelReq, err := http.NewRequest(
 		"POST", 
 		baseURL+"/models/create", 
