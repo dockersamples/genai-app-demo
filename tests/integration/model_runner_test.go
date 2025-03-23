@@ -11,53 +11,16 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/testcontainers/testcontainers-go"
-	"github.com/testcontainers/testcontainers-go/wait"
 )
 
-// TestModelRunnerIntegration tests connectivity to the Docker Model Runner
+// TestModelRunnerIntegration tests connectivity to the Model Runner using host.docker.internal
 func TestModelRunnerIntegration(t *testing.T) {
 	if testing.Short() {
-		t.Skip("Skipping Docker Model Runner test in short mode")
+		t.Skip("Skipping Model Runner test in short mode")
 	}
 
-	// Start a Socat container to forward traffic to model-runner.docker.internal
-	ctx := context.Background()
-	socatContainer, err := testcontainers.GenericContainer(ctx, testcontainers.GenericContainerRequest{
-		ContainerRequest: testcontainers.ContainerRequest{
-			Image: "alpine/socat",
-			Cmd:   []string{"tcp-listen:8080,fork,reuseaddr", "tcp:model-runner.docker.internal:80"},
-			ExposedPorts: []string{
-				"8080/tcp",
-			},
-			WaitingFor: wait.ForListeningPort("8080/tcp"),
-		},
-		Started: true,
-	})
-
-	if err != nil {
-		t.Fatalf("Failed to start socat container: %s", err)
-	}
-
-	defer func() {
-		if err := socatContainer.Terminate(ctx); err != nil {
-			t.Logf("Failed to terminate container: %s", err)
-		}
-	}()
-
-	// Get the mapped port and host
-	mappedPort, err := socatContainer.MappedPort(ctx, "8080")
-	if err != nil {
-		t.Fatalf("Failed to get mapped port: %s", err)
-	}
-
-	host, err := socatContainer.Host(ctx)
-	if err != nil {
-		t.Fatalf("Failed to get host: %s", err)
-	}
-
-	// Create the base URL for the API
-	baseURL := fmt.Sprintf("http://%s:%s", host, mappedPort.Port())
+	// Use the fixed host.docker.internal:12434 endpoint
+	baseURL := "http://host.docker.internal:12434"
 	client := &http.Client{Timeout: 10 * time.Second}
 
 	// Test 1: GET /models endpoint
@@ -112,7 +75,7 @@ func TestModelRunnerIntegration(t *testing.T) {
 		}
 	}
 	
-	// Optional: Try to create a model if not already present
+	// Define model name from configuration
 	modelName := "ignaciolopezluna020/llama3.2:1B"
 	modelPresent := false
 	
