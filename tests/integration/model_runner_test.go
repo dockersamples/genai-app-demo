@@ -19,7 +19,7 @@ func TestModelRunnerIntegration(t *testing.T) {
 	}
 
 	// Use the fixed host.docker.internal:12434 endpoint
-	baseURL := "http://host.docker.internal:12434"
+	baseURL := "http://localhost:12434"
 	client := &http.Client{Timeout: 10 * time.Second}
 
 	// Test 1: GET /models endpoint
