@@ -12,14 +12,14 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-// TestModelRunnerIntegration tests connectivity to the Model Runner using host.docker.internal
+// TestModelRunnerIntegration tests connectivity to the Model Runner using localhost
 func TestModelRunnerIntegration(t *testing.T) {
 	if testing.Short() {
 		t.Skip("Skipping Model Runner test in short mode")
 	}
 
-	// Use the fixed host.docker.internal:12434 endpoint
-	baseURL := "http://host.docker.internal:12434"
+	// Use localhost instead of host.docker.internal when running outside Docker
+	baseURL := "http://localhost:12434"
 	client := &http.Client{Timeout: 10 * time.Second}
 
 	// Test 1: GET /models endpoint
