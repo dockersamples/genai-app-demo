@@ -14,7 +14,7 @@ There are two ways you can use Model Runner:
 - Using TCP
 
 
-### Using Internal DNS
+### Using Docker socket
 
 This methods points to the same Model Runner (llama.cpp engine) but through different connection method. 
 It uses the internal Docker DNS resolution (model-runner.docker.internal)
@@ -97,7 +97,7 @@ go run main.go
 Make sure to set the environment variables in `backend.env` or provide them directly.
 
 
-## Using TCP 
+## Using TCP Host
 
 This menthods points to the same Model Runner (`llama.cpp engine`) but through different connection method. 
 It uses the host-side TCP support via `host.docker.internal:12434`
