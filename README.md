@@ -4,7 +4,7 @@ A modern chat application demonstrating integration of frontend technologies wit
 
 ## Overview
 
-This project is a full-stack GenAI chat application that showcases how to build a Generative AI interface with a React frontend and Go backend, connected to Llama 3.2 running on Ollama.
+This project is a full-stack GenAI chat application that showcases how to build a Generative AI interface with a React frontend and Go backend using Model Runner.
 
 ## Two Methods
 
@@ -27,14 +27,14 @@ The application consists of three main components:
 
 1. **Frontend**: React TypeScript application providing a responsive chat interface
 2. **Backend**: Go server that handles API requests and connects to the LLM
-3. **Model Runner**: Ollama service running the Llama 3.2 (1B parameter) model
+3. **Model Runner**: Llama 3.2 (1B parameter) model
 
 ```
 ┌─────────────┐     ┌─────────────┐     ┌─────────────┐
-│   Frontend  │ >>> │   Backend   │ >>> │    Ollama   │
+│   Frontend  │ >>> │   Backend   │ >>> │Model Runner │
 │  (React/TS) │     │    (Go)     │     │  (Llama 3.2)│
 └─────────────┘     └─────────────┘     └─────────────┘
-      :3000              :8080              :11434
+      :3000              :8080             :12434
 ```
 
 ##### Features
@@ -109,7 +109,7 @@ The backend connects to the LLM service using environment variables defined in `
 
 - `BASE_URL`: URL for the model runner
 - `MODEL`: Model identifier to use
-- `API_KEY`: API key for authentication (defaults to "ollama")
+- `API_KEY`: API key for authentication 
 
 ## Deployment
 
