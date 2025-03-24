@@ -16,8 +16,8 @@ There are two ways you can use Model Runner:
 
 ### Using Docker socket
 
-This methods points to the same Model Runner (llama.cpp engine) but through different connection method. 
-It uses the internal Docker DNS resolution (model-runner.docker.internal)
+This methods points to the same Model Runner (`llama.cpp` engine) but through different connection method. 
+It uses the internal Docker DNS resolution (`model-runner.docker.internal`)
 
 
 
@@ -99,7 +99,7 @@ Make sure to set the environment variables in `backend.env` or provide them dire
 
 ## Using TCP Host
 
-This menthods points to the same Model Runner (`llama.cpp engine`) but through different connection method. 
+This methods points to the same Model Runner (`llama.cpp engine`) but through different connection method. 
 It uses the host-side TCP support via `host.docker.internal:12434`
 
 
@@ -115,24 +115,6 @@ The backend connects to the LLM service using environment variables defined in `
 
 The application is configured for easy deployment using Docker Compose. See the `compose.yaml` and `ollama-ci.yaml` files for details.
 
-## Integration with Testcontainers
-
-Switch to `feature/testcontainers-integration` branch and run the following script:
-
-```
-git checkout feature/testcontainers-integration
-chmod +x setup-tc.sh
-./setup-tc.sh
-```
-
-What's this script all about:
-
-- Connects to the model runner
-- Test Model availability and creation
-- Tests the models endpoint
-- Parse the response
-- Creates a model
-- The endpoint to use in your application
 
 
 ## License
