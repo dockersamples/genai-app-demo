@@ -37,7 +37,7 @@ To run all tests:
 make test
 ```
 
-**Note**: This will start all containers (Ollama, backend, frontend) and run all tests. The first run might be slow as Docker images are downloaded and built.
+**Note**: This will start all containers (backend, frontend) and run all tests. The first run might be slow as Docker images are downloaded and built.
 
 ### Specific Test Categories
 
@@ -91,9 +91,9 @@ Our test suite includes:
 
 The tests use Testcontainers to create:
 
-1. An Ollama container running Llama 3.2 (1B parameter model)
-2. A backend container with the Go API server
-3. A frontend container with the React application (optional)
+
+1. A backend container with the Go API server
+2. A frontend container with the React application (optional)
 
 All containers are connected via a Docker network to ensure proper communication.
 
