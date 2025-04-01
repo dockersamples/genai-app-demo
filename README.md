@@ -113,7 +113,7 @@ The backend connects to the LLM service using environment variables defined in `
 
 ## Deployment
 
-The application is configured for easy deployment using Docker Compose. See the `compose.yaml` and `ollama-ci.yaml` files for details.
+The application is configured for easy deployment using Docker Compose. See the `compose.yaml` file for details.
 
 
 
