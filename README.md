@@ -54,7 +54,7 @@ The application consists of three main components:
 - Download the model before proceeding further
 
 ```
-docker model pull ignaciolopezluna020/llama3.2:1B
+docker model pull ai/llama3.2:1B-Q8_0
 ```
 
 ##### Quick Start
